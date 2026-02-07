@@ -17,8 +17,10 @@ const Button: React.FC<{
   variant?: 'primary' | 'secondary' | 'outline' | 'disabled';
   className?: string;
   onClick?: () => void;
-}> = ({ children, variant = 'primary', className = '', onClick }) => {
-  const base = "px-8 py-3 rounded-full font-medium transition-all duration-300 transform active:scale-95 text-center";
+  asAnchor?: boolean;
+  href?: string;
+}> = ({ children, variant = 'primary', className = '', onClick, asAnchor, href }) => {
+  const base = "px-8 py-3 rounded-full font-medium transition-all duration-300 transform active:scale-95 text-center inline-block cursor-pointer";
   const styles = {
     primary: `${COLORS.primary} text-white hover:opacity-90 shadow-lg shadow-sage-200`,
     secondary: `${COLORS.secondary} text-[#2D3436] hover:opacity-90`,
@@ -26,8 +28,18 @@ const Button: React.FC<{
     disabled: "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
   };
 
+  const fullClassName = `${base} ${styles[variant]} ${className}`;
+
+  if (asAnchor && href) {
+    return (
+      <a href={href} className={fullClassName}>
+        {children}
+      </a>
+    );
+  }
+
   return (
-    <button onClick={variant !== 'disabled' ? onClick : undefined} className={`${base} ${styles[variant]} ${className}`}>
+    <button onClick={variant !== 'disabled' ? onClick : undefined} className={fullClassName}>
       {children}
     </button>
   );
@@ -51,7 +63,9 @@ export const Navigation: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
-            <span className="text-2xl serif font-semibold text-[#B2C2B2]">{BRAND_NAME}</span>
+            <a href="/" className="text-2xl serif font-semibold text-[#B2C2B2] hover:opacity-80 transition-opacity">
+              {BRAND_NAME}
+            </a>
           </div>
           
           <div className="hidden md:flex space-x-8 items-center">
@@ -64,7 +78,7 @@ export const Navigation: React.FC = () => {
                 {item.name}
               </a>
             ))}
-            <Button variant="primary" className="!px-6 !py-2 text-sm">Umów wizytę online</Button>
+            <Button asAnchor href="#kontakt" variant="primary" className="!px-6 !py-2 text-sm">Umów wizytę online</Button>
           </div>
 
           <div className="md:hidden flex items-center">
@@ -87,7 +101,7 @@ export const Navigation: React.FC = () => {
               {item.name}
             </a>
           ))}
-          <Button variant="primary" className="w-full">Umów wizytę</Button>
+          <Button asAnchor href="#kontakt" variant="primary" className="w-full" onClick={() => setIsOpen(false)}>Umów wizytę</Button>
         </div>
       )}
     </nav>
@@ -95,21 +109,21 @@ export const Navigation: React.FC = () => {
 };
 
 export const Hero: React.FC = () => (
-  <section className="pt-32 pb-20 md:pt-48 md:pb-32 bg-[#FAFAF8] relative overflow-hidden">
+  <section className="pt-24 pb-12 md:pt-32 md:pb-20 bg-[#FAFAF8] relative overflow-hidden">
     <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-[#EDE7DE] rounded-full blur-3xl opacity-30" />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
       <div className="flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/2 text-center md:text-left">
-          <span className="text-[#B2C2B2] font-semibold tracking-widest uppercase text-sm mb-4 block">Psychoterapia Online</span>
-          <h1 className="text-4xl md:text-6xl font-semibold text-[#2D3436] leading-tight mb-6">
-            Twoje bezpieczne miejsce na <span className="italic">zmianę</span> – bez wychodzenia z domu.
+          <span className="text-[#B2C2B2] font-semibold tracking-widest uppercase text-[12px] mb-3 block">Psychoterapia Online</span>
+          <h1 className="text-3xl md:text-5xl font-semibold text-[#2D3436] leading-tight mb-4">
+            Twoje bezpieczne miejsce na <span className="italic">zmianę</span>.
           </h1>
-          <p className="text-lg md:text-xl text-gray-500 mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed">
+          <p className="text-base md:text-lg text-gray-500 mb-6 max-w-lg mx-auto md:mx-0 leading-relaxed">
             Profesjonalna pomoc psychologiczna dostępna tam, gdzie Ty. Oszczędź czas i zadbaj o swój dobrostan w komfortowych warunkach.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <Button variant="primary">Umów pierwszą wizytę</Button>
-            <Button variant="outline">Jak wygląda sesja online?</Button>
+            <Button asAnchor href="#kontakt" variant="primary">Umów pierwszą wizytę</Button>
+            <Button asAnchor href="#jak-pracuje" variant="outline">Jak wygląda sesja?</Button>
           </div>
         </div>
         <div className="md:w-1/2 relative">
@@ -117,11 +131,11 @@ export const Hero: React.FC = () => (
             <img 
               src="https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=1200" 
               alt="Spokojny gabinet psychologa" 
-              className="w-full aspect-[4/5] object-cover"
+              className="w-full aspect-[16/10] md:aspect-[4/5] object-cover"
             />
           </div>
-          <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl hidden md:block max-w-[200px]">
-            <p className="text-sm italic font-serif text-gray-600">"Technologia w służbie empatii. Jestem blisko, mimo dystansu."</p>
+          <div className="absolute -bottom-4 -left-4 bg-white p-4 rounded-xl shadow-lg hidden md:block max-w-[180px]">
+            <p className="text-[12px] italic font-serif text-gray-600 leading-snug">"Technologia w służbie empatii. Jestem blisko, mimo dystansu."</p>
           </div>
         </div>
       </div>
@@ -130,7 +144,7 @@ export const Hero: React.FC = () => (
 );
 
 export const About: React.FC = () => (
-  <section id="o-mnie" className="py-24 bg-white">
+  <section id="o-mnie" className="py-20 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row gap-16 items-center">
         <div className="md:w-5/12">
@@ -169,7 +183,7 @@ export const About: React.FC = () => (
 );
 
 export const ForWhom: React.FC = () => (
-  <section id="dla-kogo" className="py-24 bg-[#F5F5F0]">
+  <section id="dla-kogo" className="py-20 bg-[#F5F5F0]">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <SectionHeading 
         title="W czym mogę Ci pomóc online?" 
@@ -199,7 +213,7 @@ export const ForWhom: React.FC = () => (
 );
 
 export const HowIWork: React.FC = () => (
-  <section className="py-24 bg-white overflow-hidden">
+  <section id="jak-pracuje" className="py-20 bg-white overflow-hidden">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row items-center gap-16">
         <div className="md:w-1/2">
@@ -243,9 +257,9 @@ export const HowIWork: React.FC = () => (
 );
 
 export const Offer: React.FC = () => (
-  <section id="oferta" className="py-24 bg-[#FAFAF8]">
+  <section id="oferta" className="py-20 bg-[#FAFAF8]">
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <SectionHeading title="Wybierz formę wsparcia" center subtitle="Skupiam się na najwyższej jakości sesjach online, planując jednocześnie otwarcie przestrzeni stacjonarnej." />
+      <SectionHeading title="Wybierz formę wsparcia" center subtitle="Skupiam się na najwyższej jakości sesjach online." />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {PRICES.map((item, i) => (
           <div key={i} className={`p-10 rounded-[2.5rem] border transition-all duration-500 flex flex-col ${item.isAvailable ? 'bg-white border-[#B2C2B2] shadow-xl scale-105 z-10' : 'bg-gray-50/50 border-gray-100 opacity-80'}`}>
@@ -275,7 +289,7 @@ export const Offer: React.FC = () => (
               ))}
             </ul>
             
-            <Button variant={item.isAvailable ? 'primary' : 'disabled'} className="w-full">
+            <Button asAnchor href="#kontakt" variant={item.isAvailable ? 'primary' : 'disabled'} className="w-full">
               {item.isAvailable ? 'Zarezerwuj termin' : 'Powiadom mnie o otwarciu'}
             </Button>
           </div>
@@ -286,9 +300,9 @@ export const Offer: React.FC = () => (
 );
 
 export const Trust: React.FC = () => (
-  <section className="py-24 bg-white">
+  <section className="py-20 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="bg-[#EDE7DE]/30 rounded-[3rem] p-12 md:p-20 text-center">
+      <div className="bg-[#EDE7DE]/30 rounded-[3rem] p-12 md:p-16 text-center">
         <SectionHeading title="Dlaczego warto mi zaufać?" center />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mt-12">
           {FEATURES.map((item, i) => (
@@ -307,7 +321,7 @@ export const Trust: React.FC = () => (
 );
 
 export const Testimonials: React.FC = () => (
-  <section className="py-24 bg-[#FAFAF8]">
+  <section className="py-20 bg-[#FAFAF8]">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <SectionHeading title="Opinie moich pacjentów" center />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -324,10 +338,10 @@ export const Testimonials: React.FC = () => (
 );
 
 export const FirstVisit: React.FC = () => (
-  <section className="py-24 bg-white">
+  <section className="py-20 bg-white">
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <div className="bg-[#B2C2B2] p-12 rounded-[3rem] text-white">
-        <h2 className="text-3xl serif mb-6">Jak przygotować się do sesji online?</h2>
+        <h2 className="text-2xl md:text-3xl serif mb-6">Jak przygotować się do sesji online?</h2>
         <p className="text-lg opacity-90 mb-8">
           Wystarczy komputer lub telefon, stabilny internet i 50 minut spokoju. Wybierz miejsce, w którym nikt nie będzie Ci przeszkadzał. Słuchawki pomogą zachować dodatkową prywatność.
         </p>
@@ -340,7 +354,7 @@ export const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-24 bg-[#FAFAF8]">
+    <section id="faq" className="py-20 bg-[#FAFAF8]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading title="Pytania o terapię online" center />
         <div className="space-y-4">
@@ -367,7 +381,7 @@ export const FAQ: React.FC = () => {
 };
 
 export const Contact: React.FC = () => (
-  <section id="kontakt" className="py-24 bg-white">
+  <section id="kontakt" className="py-20 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col lg:flex-row gap-16">
         <div className="lg:w-1/2">
@@ -428,7 +442,7 @@ export const Contact: React.FC = () => (
 );
 
 export const Footer: React.FC = () => (
-  <footer className="bg-[#2D3436] text-white py-20">
+  <footer className="bg-[#2D3436] text-white py-16">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
         <div>
